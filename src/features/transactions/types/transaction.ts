@@ -10,10 +10,18 @@ export const ExpenseCategories = [
 
 export interface Transaction {
     id: number;
-    type: string;
+    type: "Income" | "Expense";
     amount: number | undefined;
     category: string;
     date: string;
     note?: string;
     isSelected?: boolean;
+}
+
+export interface TransactionFilters {
+    type: "All" | "Income" | "Expense";
+    dateRange: "all" | "today" | "month" | "custom";
+    startDate: string;
+    endDate: string;
+    search: string;
 }

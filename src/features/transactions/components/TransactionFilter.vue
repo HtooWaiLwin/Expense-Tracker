@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
-
-export type TransactionFilters = {
-    type: "All" | "Income" | "Expense";
-    dateRange: "all" | "today" | "month" | "custom";
-    startDate: string;
-    endDate: string;
-};
+import type { TransactionFilters } from "../types/transaction";
 
 const emit = defineEmits<{
     "filter-change": [filters: TransactionFilters];
@@ -17,6 +11,7 @@ const filters = reactive<TransactionFilters>({
     dateRange: "all",
     startDate: "",
     endDate: "",
+    search: "",
 });
 
 watch(
@@ -32,6 +27,7 @@ function resetFilters() {
     filters.dateRange = "all";
     filters.startDate = "";
     filters.endDate = "";
+    filters.search = "";
 }
 </script>
 
@@ -55,6 +51,38 @@ function resetFilters() {
             >
                 Reset filters
             </button>
+        </div>
+
+        <!-- Search bar -->
+        <div class="mb-4">
+            <label
+                for="transaction-search"
+                class="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+                Search transactions
+            </label>
+
+            <div class="relative">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                </svg>
+
+                <input
+                    id="transaction-search"
+                    v-model="filters.search"
+                    type="search"
+                    placeholder="Search category, note, amount..."
+                    class="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                />
+            </div>
         </div>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
