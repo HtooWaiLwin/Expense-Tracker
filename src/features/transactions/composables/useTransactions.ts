@@ -30,6 +30,8 @@ watch(
 );
 
 export function useTransactions() {
+    const selectedId = ref<number[]>([]);
+
     // Add a transaction
     function addTransaction(transaction: Transaction) {
         const nextId =
@@ -53,11 +55,11 @@ export function useTransactions() {
     }
 
     // Remove all selected transactions
-    function removeSelectedTransactions() {
-        transactions.value = transactions.value.filter(
-            (transaction) => !transaction.isSelected,
-        );
-    }
+    // function removeSelectedTransactions() {
+    //     transactions.value = transactions.value.filter(
+    //         (transaction) => !transaction.isSelected,
+    //     );
+    // }
 
     function filterTransactions(filter: MaybeRefOrGetter<TransactionFilters>) {
         const currentFilter = toValue(filter);
@@ -137,9 +139,10 @@ export function useTransactions() {
 
     return {
         transactions,
+        selectedId,
         addTransaction,
         removeTransaction,
-        removeSelectedTransactions,
+        // removeSelectedTransactions,
         filterTransactions,
         updateTransaction,
     };

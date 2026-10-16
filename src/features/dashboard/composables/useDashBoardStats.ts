@@ -1,5 +1,9 @@
 import { computed } from "vue";
 import { useTransactions } from "@/features/transactions/composables/useTransactions";
+import {
+    IncomeCategories,
+    ExpenseCategories,
+} from "@/features/transactions/types/transaction";
 
 export function useDashboardStats() {
     const { transactions } = useTransactions();
@@ -48,6 +52,39 @@ export function useDashboardStats() {
             .slice(0, 5),
     );
 
+    const totalCategories = computed(() => {
+        return new Set([...IncomeCategories, ...ExpenseCategories]).size;
+    });
+
+    const topCategory = computed(() => {
+        const totals: Record<string, number> = {};
+
+        transactions.value
+            .filter((t) => t.type === "Expense")
+            .forEach((t) => {
+                const category = t.category || "Uncategorized";
+                totals[category] =
+                    (totals[category] || 0) + (Number(t.amount) || 0);
+            });
+
+        const [name, amount] = Object.entries(totals).sort(
+            (a, b) => b[1] - a[1],
+        )[0] || ["None", 0];
+
+        return { name, amount };
+    });
+
+    const categoryCount = computed(
+        () =>
+            new Set(
+                transactions.value.map(
+                    (t) => t.category?.trim() || "Uncategorized",
+                ),
+            ).size,
+    );
+
+    // const money = (amount: number) => formatMoney(amount);
+
     return {
         transactions,
         income,
@@ -56,10 +93,8 @@ export function useDashboardStats() {
         incomeCategories,
         expenseCategories,
         recent,
+        totalCategories,
+        categoryCount,
+        topCategory,
     };
 }
-
-export const money = (amount: number) =>
-    new Intl.NumberFormat("en-US", {
-        maximumFractionDigits: 2,
-    }).format(amount);

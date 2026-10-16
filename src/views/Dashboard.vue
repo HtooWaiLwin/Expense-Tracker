@@ -1,4 +1,3 @@
-```vue
 <script setup lang="ts">
 import Summary from "@/features/dashboard/components/Summary.vue";
 import Category from "@/features/dashboard/components/Category.vue";
@@ -12,6 +11,7 @@ const {
     incomeCategories,
     expenseCategories,
     recent,
+    transactions,
 } = useDashboardStats();
 </script>
 
@@ -26,7 +26,12 @@ const {
             </p>
         </header>
 
-        <Summary :balance="balance" :income="income" :expense="expense" />
+        <Summary
+            :balance="balance"
+            :income="income"
+            :expense="expense"
+            :transactions="transactions"
+        />
 
         <section class="grid gap-5 lg:grid-cols-2">
             <Category type="Expense" :items="expenseCategories" />
@@ -36,4 +41,3 @@ const {
         <Recent :transactions="recent" />
     </div>
 </template>
-```

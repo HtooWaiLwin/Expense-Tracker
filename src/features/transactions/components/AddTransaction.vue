@@ -11,6 +11,7 @@ import { transactionSchema } from "../schemas/transactionSchema";
 const props = defineProps<{
     showTransactionForm: boolean;
     transaction: Transaction;
+    edit: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -28,7 +29,7 @@ const getInitialValues = () => ({
 
 watch(
     () => props.transaction,
-    (newData, oldData) => {
+    () => {
         resetForm({ values: getInitialValues() });
     },
 );
@@ -56,10 +57,10 @@ const submitted = ref(false);
 
 // Clear category when the transaction type changes
 
-watch(type, () => {
+const resetCategory = () => {
     submitted.value = false;
     setFieldValue("category", "");
-});
+};
 
 // Close and reset the form
 const close = () => {
@@ -148,6 +149,7 @@ const submit = () => {
 
                     <div class="grid grid-cols-2 gap-3">
                         <label
+                            @click="resetCategory"
                             :class="
                                 type === 'Income'
                                     ? 'border-emerald-500 bg-emerald-50 text-emerald-700 ring-1 ring-emerald-500'
@@ -173,6 +175,7 @@ const submit = () => {
                         </label>
 
                         <label
+                            @click="resetCategory"
                             :class="
                                 type === 'Expense'
                                     ? 'border-red-500 bg-red-50 text-red-700 ring-1 ring-red-500'
@@ -335,9 +338,8 @@ const submit = () => {
                     </p>
                 </div>
 
-                <!-- Footer -->
                 <div
-                    class="flex flex-col-reverse gap-3 border-t border-gray-100 bg-gray-50 px-6 py-4 sm:flex-row sm:justify-end sm:px-8"
+                    class="flex flex-col-reverse gap-3 border-t border-gray-100 bg-gray-50 py-4 sm:flex-row sm:justify-end"
                 >
                     <button
                         type="button"
@@ -351,7 +353,7 @@ const submit = () => {
                         type="submit"
                         class="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
-                        Add Transaction
+                        {{ edit ? "Save" : "Add Transaction" }}
                     </button>
                 </div>
             </div>

@@ -1,41 +1,56 @@
-```vue
 <script setup lang="ts">
 import { computed } from "vue";
-import { money } from "../composables/useDashBoardStats";
+import { useDashboardStats } from "../composables/useDashBoardStats";
+import type { Transaction } from "@/features/transactions/types/transaction";
+import { money } from "@/utils/money";
 
 const props = defineProps<{
     balance: number;
     income: number;
     expense: number;
+    transactions: Transaction[];
 }>();
+
+const { totalCategories, categoryCount, topCategory } = useDashboardStats();
 
 const cards = computed(() => [
     {
         name: "Total Balance",
-        amount: props.balance,
+        amount: money(props.balance),
         icon: "◈",
         color: "text-indigo-600",
         bg: "bg-indigo-50",
+        detail: "All transactions",
     },
     {
         name: "Total Income",
-        amount: props.income,
+        amount: money(props.income),
         icon: "↗",
         color: "text-emerald-600",
         bg: "bg-emerald-50",
+        detail: "Total money received",
     },
     {
         name: "Total Expenses",
-        amount: props.expense,
+        amount: money(props.expense),
         icon: "↘",
         color: "text-rose-600",
         bg: "bg-rose-50",
+        detail: "Total money spent",
+    },
+    {
+        name: "Categories Used",
+        amount: String(categoryCount.value + " of " + totalCategories.value),
+        icon: "▦",
+        color: "text-amber-600",
+        bg: "bg-amber-50",
+        detail: `Top spent: ${topCategory.value.name} · ${money(topCategory.value.amount)}`,
     },
 ]);
 </script>
 
 <template>
-    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <article
             v-for="card in cards"
             :key="card.name"
@@ -56,9 +71,14 @@ const cards = computed(() => [
             <p
                 class="mt-3 break-all text-2xl font-bold tracking-tight text-slate-800"
             >
-                {{ money(card.amount) }}
+                {{ card.amount }}
             </p>
-            <p class="mt-2 text-xs text-slate-400">All transactions</p>
+            <p
+                class="mt-2 truncate text-xs text-slate-400"
+                :title="card.detail"
+            >
+                {{ card.detail }}
+            </p>
         </article>
     </section>
 </template>

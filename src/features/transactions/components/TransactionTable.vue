@@ -4,13 +4,9 @@ import type { TransactionFilters } from "../types/transaction";
 import { useTransactions } from "../composables/useTransactions";
 import type { Transaction } from "../types/transaction";
 import Pagination from "./Pagination.vue";
+import ConfirmBox from "./ConfirmBox.vue";
 
-const {
-    transactions,
-    removeTransaction,
-    removeSelectedTransactions,
-    filterTransactions,
-} = useTransactions();
+const { selectedId, removeTransaction, filterTransactions } = useTransactions();
 
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -24,21 +20,7 @@ defineEmits<{
 }>();
 
 const selectAll = ref<boolean>(false);
-
-const selectedTransactions = computed(() =>
-    transactions.value.filter((t) => t.isSelected),
-);
-
 const filteredTransactions = computed(() => filterTransactions(props.filter));
-
-watch(selectAll, (newValue) => {
-    filteredTransactions.value.forEach((t) => (t.isSelected = newValue));
-});
-
-const deleteTransactions = () => {
-    removeSelectedTransactions();
-    selectAll.value = false;
-};
 
 const paginatedTransactions = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value;
@@ -64,34 +46,67 @@ watch([() => filteredTransactions.value.length, pageSize], () => {
         currentPage.value = lastPage;
     }
 });
+
+const showConfirm = ref<boolean>(false);
+const transactionIdToDelete = ref<number[]>([]);
+
+const askDelete = (id: number[]) => {
+    transactionIdToDelete.value.push(...id);
+    showConfirm.value = true;
+};
+
+const cancelDelete = () => {
+    showConfirm.value = false;
+    transactionIdToDelete.value = [];
+};
+
+const confirmDelete = () => {
+    transactionIdToDelete.value.forEach((id) => {
+        removeTransaction(id);
+    });
+    cancelDelete();
+    selectedId.value = [];
+    selectAll.value = false;
+};
+
+watch(selectAll, (newValue) => {
+    if (newValue) {
+        filteredTransactions.value.forEach((t) => {
+            selectedId.value.push(t.id);
+        });
+    } else {
+        selectedId.value = [];
+    }
+});
 </script>
 
 <template>
-    <div
-        v-if="selectedTransactions.length > 0"
-        class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4"
-    >
-        <p class="text-sm font-medium text-gray-700">
-            {{ selectedTransactions.length }}
-            {{
-                selectedTransactions.length === 1
-                    ? "transaction"
-                    : "transactions"
-            }}
-            selected
-        </p>
+    <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-gray-900">All Transactions</h2>
+        <div
+            v-if="selectedId.length > 0"
+            class="flex items-center justify-end gap-3 rounded-xl"
+        >
+            <p class="text-xs font-medium text-gray-700">
+                {{ selectedId.length }}
+                {{ selectedId.length === 1 ? "transaction" : "transactions" }}
+                selected
+            </p>
 
-        <div class="flex gap-2">
-            <button
-                type="button"
-                @click="deleteTransactions"
-                class="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
-            >
-                <span class="mr-1">🗑</span>
-                Delete selected
-            </button>
+            <div class="flex gap-2">
+                <button
+                    type="button"
+                    @click="askDelete(selectedId)"
+                    class="rounded-lg border border-red-200 bg-white px-2 py-1 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                >
+                    <span class="mr-1 font-medium text-xs"
+                        >🗑Delete selected</span
+                    >
+                </button>
+            </div>
         </div>
     </div>
+
     <div class="mt-6 overflow-x-auto rounded-lg border border-gray-200">
         <table class="w-full text-left text-sm">
             <thead class="bg-gray-50 text-xs uppercase text-gray-600">
@@ -121,7 +136,8 @@ watch([() => filteredTransactions.value.length, pageSize], () => {
                     <td class="w-10 px-2 pt-1 text-center">
                         <input
                             type="checkbox"
-                            v-model="transaction.isSelected"
+                            v-model="selectedId"
+                            :value="transaction.id"
                             class="h-4 w-4 cursor-pointer rounded border-gray-300 accent-blue-600"
                         />
                     </td>
@@ -154,7 +170,7 @@ watch([() => filteredTransactions.value.length, pageSize], () => {
                                 : 'text-red-600'
                         "
                     >
-                        {{ transaction.type === "Income" ? "+" : "-" }}
+                        {{ transaction.type === "Income" ? "+$" : "-$" }}
                         {{ (transaction.amount ?? 0).toFixed(2) }}
                     </td>
 
@@ -192,7 +208,7 @@ watch([() => filteredTransactions.value.length, pageSize], () => {
                             <!-- Delete -->
                             <button
                                 type="button"
-                                @click="removeTransaction(transaction.id)"
+                                @click="askDelete([transaction.id])"
                                 title="Delete transaction"
                                 aria-label="Delete transaction"
                                 class="rounded-lg p-2 text-red-600 transition hover:bg-red-50 hover:text-red-800"
@@ -230,6 +246,13 @@ watch([() => filteredTransactions.value.length, pageSize], () => {
             </tbody>
         </table>
 
+        <ConfirmBox
+            :show="showConfirm"
+            title="Delete Transaction?"
+            message="Are you sure you want to continue? This action cannot be undone."
+            @confirm="confirmDelete"
+            @cancel="cancelDelete"
+        ></ConfirmBox>
         <Pagination
             v-model:current-page="currentPage"
             v-model:page-size="pageSize"

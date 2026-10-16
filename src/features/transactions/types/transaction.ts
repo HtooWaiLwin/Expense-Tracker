@@ -1,10 +1,18 @@
-export const IncomeCategories = ["Salary", "Investment", "Other"] as const;
+export const IncomeCategories = [
+    "Salary",
+    "Investment",
+    "Freelance",
+    "Gift",
+    "Other",
+] as const;
 
 export const ExpenseCategories = [
     "Food & Drinks",
     "Transportation",
     "Shopping",
     "Bill",
+    "Health",
+    "Fitness",
     "Other",
 ] as const;
 
@@ -15,7 +23,6 @@ export interface Transaction {
     category: string;
     date: string;
     note?: string;
-    isSelected?: boolean;
 }
 
 export interface TransactionFilters {

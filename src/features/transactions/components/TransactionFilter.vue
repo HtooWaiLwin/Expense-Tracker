@@ -47,7 +47,7 @@ function resetFilters() {
             <button
                 type="button"
                 @click="resetFilters"
-                class="self-start rounded-lg px-3 py-2 text-sm font-medium text-blue-600 transition hover:bg-blue-50 sm:self-auto"
+                class="self-start rounded-lg px-3 py-1 text-sm font-medium text-blue-600 transition hover:bg-blue-50 sm:self-auto"
             >
                 Reset filters
             </button>

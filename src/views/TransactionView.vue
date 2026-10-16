@@ -15,7 +15,7 @@ const defaultTransaction = ref<Transaction>({
     type: "Income",
     amount: undefined,
     category: "",
-    date: "",
+    date: new Date().toISOString().slice(0, 10),
 });
 
 const editTransaction = ref<Transaction>({
@@ -96,15 +96,6 @@ const handleSaveTransaction = (transaction: Transaction) => {
             <section
                 class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm mt-6"
             >
-                <div class="border-b border-gray-100 px-5 py-4 sm:px-6">
-                    <h2 class="text-lg font-semibold text-gray-900">
-                        All Transactions
-                    </h2>
-                    <p class="mt-1 text-sm text-gray-500">
-                        Your recent financial activity
-                    </p>
-                </div>
-
                 <div class="p-4 sm:p-6">
                     <TransactionTable :filter="filterObj" @edit="editForm" />
                 </div>
@@ -114,6 +105,7 @@ const handleSaveTransaction = (transaction: Transaction) => {
             <AddTransaction
                 :show-transaction-form="showTransactionForm"
                 :transaction="edit ? editTransaction : defaultTransaction"
+                :edit="edit"
                 @close="closeForm"
                 @add="handleSaveTransaction"
             />
