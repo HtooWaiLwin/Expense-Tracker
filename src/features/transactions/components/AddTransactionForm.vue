@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import {
     type Transaction,
-    IncomeCategories,
-    ExpenseCategories,
+    type TransactionForm,
 } from "@/features/transactions/types/transaction";
 import { ref, watch, computed, nextTick } from "vue";
 import { useForm } from "vee-validate";
 import { transactionSchema } from "../schemas/transactionSchema";
+import BaseSelect from "@/components/BaseSelect.vue";
+import BaseInput from "@/components/BaseInput.vue";
+import {
+    IncomeCategories,
+    ExpenseCategories,
+} from "@/features/transactions/types/transaction";
 
 const props = defineProps<{
     showTransactionForm: boolean;
@@ -34,12 +39,11 @@ watch(
     },
 );
 
-const { defineField, errors, handleSubmit, resetForm, setFieldValue } = useForm(
-    {
+const { defineField, errors, handleSubmit, resetForm, setFieldValue } =
+    useForm<TransactionForm>({
         validationSchema: transactionSchema,
         initialValues: getInitialValues(),
-    },
-);
+    });
 
 // Form fields
 const [type] = defineField("type");
@@ -51,6 +55,13 @@ const [note] = defineField("note");
 // Categories depend on transaction type
 const categories = computed(() =>
     type.value === "Income" ? IncomeCategories : ExpenseCategories,
+);
+
+const categoryOptions = computed(() =>
+    categories.value.map((item) => ({
+        label: item,
+        value: item,
+    })),
 );
 
 const submitted = ref(false);
@@ -209,108 +220,38 @@ const submit = () => {
                 <!-- Amount and Date -->
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <!-- Amount -->
-                    <div>
-                        <label
-                            for="transaction-amount"
-                            class="mb-2 block text-sm font-semibold text-gray-700"
-                        >
-                            Amount
-                        </label>
-
-                        <div class="relative">
-                            <span
-                                class="absolute inset-y-0 left-3 flex items-center text-sm text-gray-400"
-                            >
-                                $
-                            </span>
-
-                            <input
-                                id="transaction-amount"
-                                v-model="amount"
-                                type="number"
-                                min="0.01"
-                                step="any"
-                                placeholder="0.00"
-                                :aria-invalid="!!errors.amount"
-                                :class="
-                                    errors.amount
-                                        ? 'border-red-500'
-                                        : 'border-gray-200'
-                                "
-                                class="w-full rounded-xl border bg-gray-50 py-3 pl-8 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
-                            />
-                        </div>
-
-                        <p
-                            v-if="errors.amount"
-                            class="mt-1 text-sm text-red-600"
-                        >
-                            {{ errors.amount }}
-                        </p>
-                    </div>
+                    <BaseInput
+                        id="transaction-amount"
+                        v-model="amount"
+                        label="Amount"
+                        type="number"
+                        min="0.01"
+                        step="any"
+                        placeholder="0.00"
+                        prefix="$"
+                        :error="errors.amount"
+                    />
 
                     <!-- Date -->
-                    <div>
-                        <label
-                            for="transaction-date"
-                            class="mb-2 block text-sm font-semibold text-gray-700"
-                        >
-                            Date
-                        </label>
-
-                        <input
-                            id="transaction-date"
-                            v-model="date"
-                            type="date"
-                            :aria-invalid="!!errors.date"
-                            :class="
-                                errors.date
-                                    ? 'border-red-500'
-                                    : 'border-gray-200'
-                            "
-                            class="w-full rounded-xl border bg-gray-50 px-3 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
-                        />
-                    </div>
+                    <BaseInput
+                        id="transaction-date"
+                        v-model="date"
+                        label="Date"
+                        type="date"
+                        :error="errors.date"
+                    />
                 </div>
 
                 <!-- Category -->
-                <div>
-                    <label
-                        for="transaction-category"
-                        class="mb-2 block text-sm font-semibold text-gray-700"
-                    >
-                        Category
-                    </label>
-
-                    <select
-                        id="transaction-category"
-                        v-model="category"
-                        :aria-invalid="!!errors.category"
-                        :class="
-                            submitted && errors.category
-                                ? 'border-red-500'
-                                : 'border-gray-200'
-                        "
-                        class="w-full appearance-none rounded-xl border bg-gray-50 px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10"
-                    >
-                        <option value="" disabled>Select a category</option>
-
-                        <option
-                            v-for="item in categories"
-                            :key="item"
-                            :value="item"
-                        >
-                            {{ item }}
-                        </option>
-                    </select>
-
-                    <p
-                        v-if="submitted && errors.category"
-                        class="text-red-500 text-sm"
-                    >
-                        {{ errors.category }}
-                    </p>
-                </div>
+                <BaseSelect
+                    id="transaction-category"
+                    v-model="category"
+                    label="Category"
+                    :options="categoryOptions"
+                    placeholder="Select a category"
+                    :error="submitted ? errors.category : ''"
+                    :required="true"
+                ></BaseSelect>
 
                 <!-- Note -->
                 <div>

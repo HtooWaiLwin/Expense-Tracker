@@ -9,6 +9,10 @@ const routes = [
         path: "/transactions",
         component: () => import("../views/TransactionView.vue"),
     },
+    {
+        path: "/budget",
+        component: () => import("../views/Budget.vue"),
+    },
 ];
 
 const router = createRouter({

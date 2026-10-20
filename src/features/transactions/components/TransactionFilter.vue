@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { reactive, watch } from "vue";
 import type { TransactionFilters } from "../types/transaction";
+import BaseSelect from "@/components/BaseSelect.vue";
 
 const emit = defineEmits<{
     "filter-change": [filters: TransactionFilters];
@@ -19,7 +20,7 @@ watch(
     () => {
         emit("filter-change", { ...filters });
     },
-    { deep: true },
+    { immediate: true },
 );
 
 function resetFilters() {
@@ -29,6 +30,19 @@ function resetFilters() {
     filters.endDate = "";
     filters.search = "";
 }
+
+const transactionTypes = [
+    { label: "All transactions", value: "All" },
+    { label: "Income only", value: "Income" },
+    { label: "Expense only", value: "Expense" },
+];
+
+const dateRanges = [
+    { label: "All dates", value: "all" },
+    { label: "Today", value: "today" },
+    { label: "This month", value: "month" },
+    { label: "Custom range", value: "custom" },
+];
 </script>
 
 <template>
@@ -87,45 +101,22 @@ function resetFilters() {
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <!-- Transaction type -->
-            <div>
-                <label
-                    for="transaction-type"
-                    class="mb-1.5 block text-sm font-medium text-gray-700"
-                >
-                    Transaction type
-                </label>
-
-                <select
-                    id="transaction-type"
-                    v-model="filters.type"
-                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                    <option value="All">All transactions</option>
-                    <option value="Income">Income only</option>
-                    <option value="Expense">Expense only</option>
-                </select>
-            </div>
+            <BaseSelect
+                id="transaction-type"
+                v-model="filters.type"
+                label="Transaction Type"
+                :options="transactionTypes"
+                placeholder=""
+            ></BaseSelect>
 
             <!-- Date range -->
-            <div>
-                <label
-                    for="date-range"
-                    class="mb-1.5 block text-sm font-medium text-gray-700"
-                >
-                    Date range
-                </label>
-
-                <select
-                    id="date-range"
-                    v-model="filters.dateRange"
-                    class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                    <option value="all">All dates</option>
-                    <option value="today">Today</option>
-                    <option value="month">This month</option>
-                    <option value="custom">Custom range</option>
-                </select>
-            </div>
+            <BaseSelect
+                id="date-ranges"
+                v-model="filters.dateRange"
+                label="Date Range"
+                :options="dateRanges"
+                placeholder=""
+            ></BaseSelect>
 
             <!-- Start date -->
             <div v-if="filters.dateRange === 'custom'">

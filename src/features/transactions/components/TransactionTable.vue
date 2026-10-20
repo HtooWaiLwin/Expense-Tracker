@@ -82,7 +82,7 @@ watch(selectAll, (newValue) => {
 
 <template>
     <div class="flex items-center justify-between">
-        <h2 class="text-lg font-semibold text-gray-900">All Transactions</h2>
+        <h2 class="text-lg font-semibold text-gray-900">Transactions</h2>
         <div
             v-if="selectedId.length > 0"
             class="flex items-center justify-end gap-3 rounded-xl"
@@ -108,7 +108,7 @@ watch(selectAll, (newValue) => {
     </div>
 
     <div class="mt-6 overflow-x-auto rounded-lg border border-gray-200">
-        <table class="w-full text-left text-sm">
+        <table class="w-full text-left text-xs">
             <thead class="bg-gray-50 text-xs uppercase text-gray-600">
                 <tr>
                     <th class="w-10 px-2 py-4 justify-center items-center flex">

@@ -1,3 +1,4 @@
+```vue
 <script setup lang="ts">
 import Summary from "@/features/dashboard/components/Summary.vue";
 import Category from "@/features/dashboard/components/Category.vue";

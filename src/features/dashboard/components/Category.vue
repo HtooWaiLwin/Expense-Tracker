@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { money } from "../composables/useDashBoardStats";
+import { money } from "@/utils/formatMoney";
 
 const props = defineProps<{
     type: "Income" | "Expense";

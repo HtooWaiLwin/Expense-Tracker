@@ -3,8 +3,8 @@ export const IncomeCategories = [
     "Investment",
     "Freelance",
     "Gift",
-    "Other",
-] as const;
+    "Other Income",
+];
 
 export const ExpenseCategories = [
     "Food & Drinks",
@@ -13,8 +13,8 @@ export const ExpenseCategories = [
     "Bill",
     "Health",
     "Fitness",
-    "Other",
-] as const;
+    "Other Expense",
+];
 
 export interface Transaction {
     id: number;
@@ -31,4 +31,12 @@ export interface TransactionFilters {
     startDate: string;
     endDate: string;
     search: string;
+}
+
+export interface TransactionForm {
+    type: "Income" | "Expense";
+    amount: number | string;
+    date: string;
+    category: string;
+    note: string;
 }

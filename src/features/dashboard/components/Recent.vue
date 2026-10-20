@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Transaction } from "@/features/transactions/types/transaction";
-import { money } from "../composables/useDashBoardStats";
+import { money } from "@/utils/formatMoney";
 
 defineProps<{ transactions: Transaction[] }>();
 </script>

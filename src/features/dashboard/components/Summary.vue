@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useDashboardStats } from "../composables/useDashBoardStats";
 import type { Transaction } from "@/features/transactions/types/transaction";
-import { money } from "@/utils/money";
+import { money } from "@/utils/formatMoney";
 
 const props = defineProps<{
     balance: number;

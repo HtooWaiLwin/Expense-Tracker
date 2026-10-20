@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AddTransaction from "@/features/transactions/components/AddTransaction.vue";
+import AddTransaction from "@/features/transactions/components/AddTransactionForm.vue";
 import TransactionTable from "@/features/transactions/components/TransactionTable.vue";
 import TransactionFilter from "@/features/transactions/components/TransactionFilter.vue";
 import type { Transaction } from "@/features/transactions/types/transaction";

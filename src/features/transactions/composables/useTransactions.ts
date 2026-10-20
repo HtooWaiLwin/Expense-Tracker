@@ -54,13 +54,6 @@ export function useTransactions() {
         }
     }
 
-    // Remove all selected transactions
-    // function removeSelectedTransactions() {
-    //     transactions.value = transactions.value.filter(
-    //         (transaction) => !transaction.isSelected,
-    //     );
-    // }
-
     function filterTransactions(filter: MaybeRefOrGetter<TransactionFilters>) {
         const currentFilter = toValue(filter);
 
@@ -142,7 +135,6 @@ export function useTransactions() {
         selectedId,
         addTransaction,
         removeTransaction,
-        // removeSelectedTransactions,
         filterTransactions,
         updateTransaction,
     };

@@ -142,6 +142,29 @@ const closeMenu = () => {
                 </svg>
                 Transactions
             </RouterLink>
+
+            <!-- Budget -->
+            <RouterLink
+                to="/budget"
+                active-class="bg-blue-50 text-blue-700 font-semibold"
+                class="flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                @click="closeMenu"
+            >
+                <svg
+                    class="h-5 w-5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01"
+                    />
+                </svg>
+                Budget
+            </RouterLink>
         </nav>
 
         <!-- Footer -->
